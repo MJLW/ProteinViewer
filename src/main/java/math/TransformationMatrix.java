@@ -4,7 +4,6 @@ public class TransformationMatrix extends Matrix4f {
 
     public TransformationMatrix(Vector3f translation, Vector3f rotation, Vector3f scale) {
         super(getIdentityMatrix());
-        setAsIdentityMatrix();
         translate(translation);
         rotate(rotation);
         scale(scale);

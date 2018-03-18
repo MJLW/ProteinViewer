@@ -9,12 +9,14 @@ public class Entity {
     private Vector3f position;
     private Vector3f rotation;
     private float scale;
+    private Vector3f colour;
 
-    public Entity(RawModel model, Vector3f position, Vector3f rotation, float scale) {
+    public Entity(RawModel model, Vector3f position, Vector3f rotation, float scale, Vector3f colour) {
         this.model = model;
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
+        this.colour = colour;
     }
 
     public void addToPosition(Vector3f positionAddition) {
@@ -39,5 +41,9 @@ public class Entity {
 
     public float getScale() {
         return scale;
+    }
+
+    public Vector3f getColour() {
+        return colour;
     }
 }

@@ -3,16 +3,11 @@ package display;
 import entities.Entity;
 import math.Matrix4f;
 import math.TransformationMatrix;
-import math.Vector3f;
 import models.RawModel;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import shaders.StaticShader;
-
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -26,6 +21,8 @@ public class Renderer {
     private Matrix4f projectionMatrix;
 
     public Renderer(StaticShader shader) {
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
         setProjectionMatrix();
         shader.start();
         shader.loadProjectionMatrix4f(projectionMatrix);
@@ -44,6 +41,7 @@ public class Renderer {
         GL20.glEnableVertexAttribArray(0);
         Matrix4f transformation = new TransformationMatrix(entity.getPosition(), entity.getRotation(), entity.getScale());
         shader.loadTransformationMatrix4f(transformation);
+        shader.loadColourVector(entity.getColour());
         GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);
@@ -59,8 +57,8 @@ public class Renderer {
         projectionMatrix.setValue(0, 0, xScale);
         projectionMatrix.setValue(1, 1, yScale);
         projectionMatrix.setValue(2, 2, -((FAR_PLANE + NEAR_PLANE) / frustumLength));
-        projectionMatrix.setValue(2, 3, -1);
-        projectionMatrix.setValue(3, 2, -((2 * NEAR_PLANE * FAR_PLANE) / frustumLength));
+        projectionMatrix.setValue(3, 2, -1);
+        projectionMatrix.setValue(2, 3, -((2 * NEAR_PLANE * FAR_PLANE) / frustumLength));
         projectionMatrix.setValue(3, 3, 0);
     }
 }

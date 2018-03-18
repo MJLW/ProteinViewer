@@ -97,6 +97,10 @@
             <classifier>${lwjgl.natives}</classifier>
 
         </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-commons</artifactId>
+        </dependency>
 
     </dependencies>
 

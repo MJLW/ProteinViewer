@@ -2,6 +2,7 @@ package shaders;
 
 import display.Camera;
 import math.Matrix4f;
+import math.Vector3f;
 import math.ViewMatrix;
 
 public class StaticShader extends Shader {
@@ -12,6 +13,7 @@ public class StaticShader extends Shader {
     private int transformationMatrixLocation;
     private int projectionMatrixLocation;
     private int viewMatrixLocation;
+    private int colourVectorLocation;
 
     public StaticShader() {
     super(VERTEX_FILE, FRAGMENT_FILE);
@@ -27,6 +29,7 @@ public class StaticShader extends Shader {
         transformationMatrixLocation = super.getUniformLocation("transformationMatrix");
         projectionMatrixLocation = super.getUniformLocation("projectionMatrix");
         viewMatrixLocation = super.getUniformLocation("viewMatrix");
+        colourVectorLocation = super.getUniformLocation("colourIn");
     }
 
     public void loadTransformationMatrix4f(Matrix4f matrix) {
@@ -40,5 +43,9 @@ public class StaticShader extends Shader {
 
     public void loadProjectionMatrix4f(Matrix4f matrix) {
         super.loadUniformMatrix4f(projectionMatrixLocation, matrix);
+    }
+
+    public void loadColourVector(Vector3f vector) {
+        super.loadUniformVector3f(colourVectorLocation, vector);
     }
 }

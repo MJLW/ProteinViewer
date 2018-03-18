@@ -26,14 +26,15 @@ public class Vector3f {
         set(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void add(float x, float y, float z) {
+    public Vector3f add(float x, float y, float z) {
         this.x += x;
         this.y += y;
         this.z += z;
+        return this;
     }
 
-    public void add(Vector3f vector) {
-        add(vector.getX(), vector.getY(), vector.getZ());
+    public Vector3f add(Vector3f vector) {
+        return add(vector.getX(), vector.getY(), vector.getZ());
     }
 
     public void sub(float x, float y, float z) {

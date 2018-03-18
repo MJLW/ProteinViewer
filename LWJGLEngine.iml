@@ -23,5 +23,6 @@
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-openal:natives-windows:3.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-opengl:natives-windows:3.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-stb:natives-windows:3.1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.junit.platform:junit-platform-commons:unknown" level="project" />
   </component>
 </module>

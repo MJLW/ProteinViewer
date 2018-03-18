@@ -13,9 +13,12 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 import shaders.StaticShader;
 import util.Loader;
+import util.ObjectLoader;
+import util.PDBReader;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -88,85 +91,39 @@ public class Screen {
         StaticShader shader = new StaticShader();
         Renderer renderer = new Renderer(shader);
 
-        float[] vertices = {
-                -0.5f,0.5f,-0.5f,
-                -0.5f,-0.5f,-0.5f,
-                0.5f,-0.5f,-0.5f,
-                0.5f,0.5f,-0.5f,
+        RawModel model = ObjectLoader.loadObjectModel("ball", loader);
 
-                -0.5f,0.5f,0.5f,
-                -0.5f,-0.5f,0.5f,
-                0.5f,-0.5f,0.5f,
-                0.5f,0.5f,0.5f,
+        Camera camera = new Camera(0, 0, 0);
+        PDBReader pdbReader = new PDBReader();
+        String pdbLine = pdbReader.readFromPDBFile("src/main/resources/testPdb.pdb");
 
-                0.5f,0.5f,-0.5f,
-                0.5f,-0.5f,-0.5f,
-                0.5f,-0.5f,0.5f,
-                0.5f,0.5f,0.5f,
+        ArrayList<Vector3f>[] result = pdbReader.parseAtoms(pdbLine);
+        ArrayList<Entity> entities = new ArrayList<>();
+        Vector3f avgPositionOfProtein = new Vector3f(0, 0, 0);
 
-                -0.5f,0.5f,-0.5f,
-                -0.5f,-0.5f,-0.5f,
-                -0.5f,-0.5f,0.5f,
-                -0.5f,0.5f,0.5f,
+        for (int i = 0; i < result[0].size(); i++) {
+            entities.add(new Entity(model, result[0].get(i),new Vector3f(0, 0, 0), 0.5f, result[1].get(i)));
+            avgPositionOfProtein.add(result[0].get(i));
+        }
+        avgPositionOfProtein.set(-avgPositionOfProtein.x / entities.size(), -avgPositionOfProtein.y / entities.size(), -avgPositionOfProtein.z / entities.size());
+        System.out.println("X: " + avgPositionOfProtein.x + ", Y: " + avgPositionOfProtein.y + ", Z: " + avgPositionOfProtein.z);
+//        camera.setTargetPosition(avgPositionOfProtein);
 
-                -0.5f,0.5f,0.5f,
-                -0.5f,0.5f,-0.5f,
-                0.5f,0.5f,-0.5f,
-                0.5f,0.5f,0.5f,
-
-                -0.5f,-0.5f,0.5f,
-                -0.5f,-0.5f,-0.5f,
-                0.5f,-0.5f,-0.5f,
-                0.5f,-0.5f,0.5f
-        };
-
-        int[] indices = {
-                0,1,3,
-                3,1,2,
-                4,5,7,
-                7,5,6,
-                8,9,11,
-                11,9,10,
-                12,13,15,
-                15,13,14,
-                16,17,19,
-                19,17,18,
-                20,21,23,
-                23,21,22
-        };
-
-//        float[] vertices = {
-//                -0.5f, 0.5f, 0,
-//                -0.5f, -0.5f, 0,
-//                0.5f, -0.5f, 0,
-//                0.5f, 0.5f, 0
-//        };
-
-//        int[] indices = {
-//                0, 1, 3,
-//                3, 1, 2
-//        };
-
-        RawModel model = loader.loadModel(vertices, indices);
-
-        Entity entity = new Entity(model, new Vector3f(0, 0f, -5f), new Vector3f(0, 0, 0), 1);
-
-        Camera camera = new Camera();
+        for (int i = 0; i < entities.size(); i++) {
+            entities.get(i).addToPosition(avgPositionOfProtein);
+        }
 
         while (!glfwWindowShouldClose(window)) {
             renderer.clear(); // clear previous screen
-
             camera.move();
 
             // rendering
             shader.start();
             shader.loadViewMatrix(camera);
-            renderer.render(entity, shader);
+            for (Entity entity : entities.toArray(new Entity[entities.size()])) {
+                renderer.render(entity, shader);
+            }
             shader.stop();
-
-            // logic
-//            entity.addToRotation(new Vector3f(0f, 0f, 0.025f));
-//            entity.addToPosition(new Vector3f(0f, 0.1f, 0f));
 
             glfwSwapBuffers(window);
             glfwPollEvents();
